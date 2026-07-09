@@ -69,7 +69,7 @@ async function callClaude(payload) {
 async function fetchEnrichment(notes, topic) {
   const combined = notes.map((n, i) => `Note ${i + 1}: "${n.text}"`).join("\n");
   return callClaude({
-    model: "claude-sonnet-4-6", max_tokens: 1000,
+    model: "claude-sonnet-4-6", max_tokens: 2000,
     system: ENRICH_PROMPT,
     messages: [{ role: "user", content: `Topic: ${topic}\n\n${combined}` }]
   });
