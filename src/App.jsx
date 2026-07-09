@@ -7,14 +7,17 @@ const TOPICS = [
   "Jesus Christ", "Other"
 ];
 
-const ENRICH_PROMPT = `You are an LDS spiritual content assistant. Given an idea and topic, return ONLY valid JSON with no markdown or preamble:
+const ENRICH_PROMPT = `You are an LDS spiritual content assistant. Given an idea and topic, return ONLY a raw JSON object. No markdown. No code blocks. No backticks. No explanation. Start your response with { and end with }.
+
+Use exactly this structure:
 {
   "scriptures": [{ "reference": "string", "text": "string", "connection": "string" }],
   "talks": [{ "title": "string", "speaker": "string", "year": "string", "connection": "string" }],
-  "stories": [{ "title": "string", "content": "string", "source": "string" }],
+  "stories": [{ "title": "string", "content": "string (2-3 sentences)", "source": "string" }],
   "philosophy": [{ "quote": "string", "author": "string", "connection": "string" }]
 }
-Include 2-3 scriptures (all standard works), 2-3 real conference talks, 1-2 stories, 1-2 philosophical quotes. Return ONLY the JSON.`;
+
+Include 2-3 scriptures, 2-3 real conference talks, 1-2 stories, 1-2 philosophy quotes with actual quote text and author name. Your entire response must be valid JSON starting with {`;
 
 const BUILD_PROMPT = `You are an LDS talk builder. Create a complete sacrament talk from the provided idea and notes.
 Return ONLY valid JSON with no markdown or preamble:
