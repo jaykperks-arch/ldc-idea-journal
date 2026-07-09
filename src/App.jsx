@@ -436,9 +436,12 @@ export default function App() {
     setEnrichingId(idea.id);
     try {
       const data = await fetchEnrichment(idea.notes, idea.topic);
+      console.log("Enrichment data:", JSON.stringify(data));
       const updated = ideas.map(i => i.id === idea.id ? { ...i, enrichment: data } : i);
       updateIdeas(updated); setExpandedId(idea.id);
-    } catch (e) {}
+    } catch (e) {
+      console.error("Enrichment error:", e.message, e.stack);
+    }
     setEnrichingId(null);
   };
 
