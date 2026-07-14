@@ -75,9 +75,16 @@ Section counts by time:
 Develop each section FULLY — do not truncate ideas. Use all the notes provided. Weave in the selected resources naturally. Make it feel like a real, thoughtful sacrament talk.`;
 
 async function callClaude(payload) {
-  const res = await fetch("/api/claude", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({ ...payload, stream: true })
   });
 
   const reader = res.body.getReader();
