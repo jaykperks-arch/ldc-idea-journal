@@ -79,9 +79,31 @@ async function callClaude(payload) {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
-  const data = await res.json();
-  const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
-  return JSON.parse(text.replace(/```json|```/g,"").trim());
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let fullText = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    const lines = chunk.split("\n");
+    for (const line of lines) {
+      if (line.startsWith("data: ")) {
+        const data = line.slice(6).trim();
+        if (data === "[DONE]") break;
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === "content_block_delta" && parsed.delta?.type === "text_delta") {
+            fullText += parsed.delta.text;
+          }
+        } catch(e) {}
+      }
+    }
+  }
+
+  return JSON.parse(fullText.replace(/```json|```/g,"").trim());
 }
 
 async function fetchEnrichment(notes, topicLabel, subtopic) {
